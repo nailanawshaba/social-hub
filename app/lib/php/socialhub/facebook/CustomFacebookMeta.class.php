@@ -3,27 +3,26 @@ require_once __DIR__ . '/../../facebook-php-sdk/src/facebook.php';
 require_once 'CustomFacebookPost.class.php';
 
 class CustomFacebookMeta {
-	private $appIdKey = "YOUR_APP_ID_KEY";
-	private $appSecret= "YOUR_APP_SECRET";
+	private $facebook;
+	
 	public $limit = 12;
-	private $query = '/YOUR_FACEBOOK_PAGE_NAME/posts?fields=&limit=12';
 	public $posts = array();
 	public $next;
 	public $previous;
 	
-	private $facebook;
-	
 	public function __construct($until="") {
+		$keysFile = parse_ini_file(__DIR__ ."/../keys.ini");
+		
 		$this->facebook = new Facebook(array(
-			'appId'  => $this->appIdKey,
-			'secret' => $this->appSecret,
+			'appId'  => $keysFile["appIdKey"],
+			'secret' => $keysFile["appSecret"],
 		));
-		$this->createQuery($until);
-		$this->fillMeta();
+		$query = $this->createQuery($keysFile["facebookPageName"], $until);
+		$this->fillMeta($query);
 	}
 	
-	private function fillMeta(){
-		$value = $this->facebook->api($this->query, 'get');
+	private function fillMeta($query){
+		$value = $this->facebook->api($query, 'get');
 		
 		$this->next = $this->getUntil($value["paging"]["next"]);
 		$this->previous = $this->getUntil($value["paging"]["previous"]);
@@ -33,10 +32,12 @@ class CustomFacebookMeta {
 		}
 	}
 	
-	private function createQuery($until){
+	private function createQuery($pageName, $until){
 		if (is_numeric($until)) {
 			$until--;
-			$this->query = "/YOUR_FACEBOOK_PAGE_NAME/posts?fields=&limit=". $this->limit . "&until=". $until;
+			return "/". $pageName ."/posts?fields=&limit=". $this->limit . "&until=". $until;
+		} else {
+			return "/". $pageName ."/posts?fields=&limit=12";
 		}
 	}
 	
