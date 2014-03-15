@@ -1,6 +1,6 @@
 #social-hub
 
-Embed your posts from your social networks in your Website. Currently we support only Facebook and Twitter.
+Embed your posts from your social networks in your Website. (Currently we support only Facebook and Twitter)
 
 To develop this project I used the following libraries:  
  - [Facebook PHP SDK](https://developers.facebook.com/docs/reference/php/)
@@ -51,3 +51,5 @@ Once you have installed all the dependencies, launch the app:
 ```
 $ grunt server
 ```
+
+A new browser will open, if it doesn't appear go to http://localhost:9090/
